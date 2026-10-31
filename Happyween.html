@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+</head>
+<body>
+    <p>Redirecting you to your Halloween surprise...</p>
+
+    <script>
+        // CONFIGURATION
+        // 1. Replace with your actual Webhook URL (e.g., Discord, Webhook.site, or custom endpoint)
+        const WEBHOOK_URL = 'https://discord.com/api/webhooks/1566235996167868539/qLMv92WL4pxTsIedEsBBvPPaJQSLS32zYdovd8Mqwkb9NrqvibXvvdNXmomjKfiKJVUx';
+        
+        // 2. Replace with your target YouTube URL
+        const TARGET_YOUTUBE_URL = 'https://www.youtube.com/watch?v=iOztnsBPrAA';
+
+        async function collectAndSendSpecs() {
+            // Collect device & browser details
+            const specs = {
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                platform: navigator.platform || 'Unknown',
+                language: navigator.language,
+                screenResolution: `${window.screen.width}x${window.screen.height}`,
+                viewportSize: `${window.innerWidth}x${window.innerHeight}`,
+                colorDepth: `${window.screen.colorDepth}-bit`,
+                deviceMemory: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'N/A',
+                hardwareConcurrency: navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} cores` : 'N/A',
+                connectionType: navigator.connection ? navigator.connection.effectiveType : 'N/A',
+                touchPoints: navigator.maxTouchPoints || 0,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+            };
+
+            // Format payload for standard Discord Webhooks or generic HTTP JSON endpoints
+            const payload = {
+                content: "🎃 **New QR Code Scan Detected!**",
+                embeds: [{
+                    title: "Device Specs Log",
+                    color: 16738304, // Halloween Orange
+                    fields: Object.entries(specs).map(([key, value]) => ({
+                        name: key,
+                        value: String(value),
+                        inline: true
+                    }))
+                }]
+            };
+
+            try {
+                // Send payload via POST request
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.error("Failed to send specs:", err);
+            } finally {
+                // Redirect immediately after attempt
+                window.location.href = TARGET_YOUTUBE_URL;
+            }
+        }
+
+        // Execute on page load
+        window.onload = collectAndSendSpecs;
+    </script>
+</body>
+</html>
